@@ -1,0 +1,24 @@
+{
+  "name": "eduradar",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "build": "npm run build -w frontend",
+    "start": "npm start -w backend",
+    "db:init": "npm run db:init -w backend",
+    "test": "node --test test/*.test.js",
+    "test:integration": "node --test test/mysql.integration.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "prettier": "^3.9.9",
+    "supertest": "^7.1.0"
+  }
+}

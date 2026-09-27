@@ -1,0 +1,245 @@
+@media (min-width: 1500px) {
+  main {
+    padding: 40px 50px;
+  }
+  .dashboard-grid {
+    grid-template-columns: minmax(0, 2.1fr) minmax(300px, 1fr);
+  }
+  td {
+    padding: 20px 10px;
+  }
+  .stat {
+    padding: 24px;
+  }
+  .welcome-strip {
+    padding: 35px;
+  }
+}
+@media (max-width: 1150px) {
+  .sidebar {
+    width: 215px;
+    padding: 25px 15px;
+  }
+  .workspace {
+    margin-left: 215px;
+    width: calc(100% - 215px);
+  }
+  main {
+    padding: 25px 22px;
+  }
+  .stats {
+    gap: 10px;
+  }
+  .stat {
+    padding: 15px 12px;
+  }
+  .stat > div {
+    font-size: 9px;
+  }
+  .stat > strong {
+    font-size: 24px;
+  }
+  .dashboard-grid {
+    grid-template-columns: minmax(0, 1.65fr) minmax(230px, 1fr);
+    gap: 15px;
+  }
+  .panel {
+    padding: 17px;
+  }
+  .orb {
+    margin-right: 10px;
+    width: 115px;
+    height: 115px;
+  }
+  .welcome-strip h2 {
+    font-size: 21px;
+  }
+  .teacher-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .auth-story {
+    padding: 35px;
+  }
+  .auth-form {
+    padding: 30px;
+  }
+  .auth-top {
+    font-size: 10px;
+  }
+}
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .attendance-panel .ring {
+    margin-top: 20px;
+  }
+  .auth {
+    grid-template-columns: 40% 60%;
+  }
+  .auth-story {
+    padding: 25px;
+  }
+  .story-copy h1 {
+    font-size: 35px;
+    letter-spacing: -1.5px;
+  }
+  .story-copy p {
+    font-size: 12px;
+  }
+  .floating {
+    font-size: 8px;
+    padding: 9px;
+  }
+  .radar-art > div:nth-child(3) {
+    width: 260px;
+    height: 260px;
+  }
+  .radar-art > div:nth-child(2) {
+    width: 220px;
+    height: 220px;
+  }
+  .floating.a {
+    left: -15px;
+  }
+  .floating.b {
+    right: -15px;
+  }
+  .page-heading {
+    align-items: flex-start;
+  }
+  h1 {
+    font-size: 25px;
+  }
+  .welcome-strip {
+    padding: 22px;
+  }
+  .welcome-strip .orb {
+    display: none;
+  }
+  .staff-toolbar {
+    flex-wrap: wrap;
+  }
+  .staff-toolbar .field {
+    min-width: 0;
+    width: 100%;
+  }
+  .preview-banner {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 650px) {
+  .sidebar {
+    display: none;
+  }
+  .sidebar.mobile-open {
+    display: flex;
+    box-shadow: 10px 0 50px #20332135;
+    width: 242px;
+    top: 69px;
+  }
+  .workspace {
+    margin-left: 0;
+    width: 100%;
+  }
+  .menu-button {
+    display: block;
+  }
+  .topbar {
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+  .topbar > div {
+    gap: 10px;
+  }
+  main {
+    padding: 24px 16px;
+  }
+  .page-heading {
+    gap: 12px;
+  }
+  .page-heading .field {
+    min-width: 116px;
+    width: 116px;
+  }
+  .page-heading h1 {
+    font-size: 23px;
+  }
+  .page-heading p {
+    font-size: 10px;
+  }
+  .page-heading .eyebrow {
+    font-size: 7px;
+    letter-spacing: 1px;
+  }
+  .welcome-strip h2 {
+    font-size: 20px;
+  }
+  .welcome-strip p {
+    font-size: 10px;
+  }
+  .stats {
+    gap: 10px;
+  }
+  .stat {
+    padding: 16px;
+  }
+  .stat > div {
+    font-size: 9px;
+  }
+  .stat p {
+    font-size: 8px;
+  }
+  .panel-head {
+    flex-wrap: wrap;
+  }
+  .panel-head .text-btn {
+    font-size: 9px;
+  }
+  .page-footer {
+    flex-wrap: wrap;
+    font-size: 8px;
+  }
+  .teacher-grid {
+    grid-template-columns: 1fr;
+  }
+  .auth {
+    display: block;
+  }
+  .auth-story {
+    display: none;
+  }
+  .auth-form {
+    min-height: 100vh;
+    padding: 25px;
+  }
+  .auth-top {
+    justify-content: center;
+  }
+  .form-wrap {
+    padding: 45px 0;
+  }
+  .profile-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .checklist strong {
+    font-size: 9px;
+  }
+  .checklist > .tag {
+    font-size: 7px;
+  }
+  .modal {
+    padding: 22px;
+  }
+  .form-grid {
+    gap: 0 10px;
+  }
+  .panel h2 {
+    font-size: 15px;
+  }
+}
