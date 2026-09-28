@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { LogOut, ShieldCheck, Building2 } from 'lucide-react';
 import { icons } from '../../constants/navigation.js';
 import { Logo } from '../common/Logo.jsx';
@@ -37,14 +38,23 @@ export function Sidebar({
             <button
               key={n}
               className={page === n ? 'active' : ''}
+              aria-current={page === n ? 'page' : undefined}
               onClick={() => {
                 setPage(n);
                 setMobile(false);
                 setNotice('');
               }}
             >
+              {page === n && (
+                <motion.span
+                  className="nav-highlight"
+                  layoutId="sidebar-active-page"
+                  aria-hidden="true"
+                  transition={{ type: 'spring', stiffness: 380, damping: 34 }}
+                />
+              )}
               <Icon size={19} />
-              {n}
+              <span className="nav-text">{n}</span>
               {n === 'Assignments' && pending > 0 && <b>{pending}</b>}
             </button>
           );
