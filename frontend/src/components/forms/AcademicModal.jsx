@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { Field } from './Field.jsx';
 import { Select } from './Select.jsx';
@@ -6,14 +7,20 @@ import { RecordFields } from './RecordFields.jsx';
 
 export function AcademicModal({ busy, setModal, modal, save, users, editable, all, error }) {
   return (
-    <div
+    <motion.div
       className="modal-backdrop"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
       onClick={(e) => {
         if (e.target === e.currentTarget && !busy) setModal(null);
       }}
     >
-      <section
+      <motion.section
         className="modal"
+        initial={{ opacity: 0, y: 18, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 8, scale: 0.98 }}
         role="dialog"
         aria-modal="true"
         aria-label="Update campus information"
@@ -157,7 +164,7 @@ export function AcademicModal({ busy, setModal, modal, save, users, editable, al
             <Check size={16} />
           </button>
         </form>
-      </section>
-    </div>
+      </motion.section>
+    </motion.div>
   );
 }

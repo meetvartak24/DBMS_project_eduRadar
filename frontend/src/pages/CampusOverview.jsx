@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+import { stagger } from '../constants/motion.js';
 import React from 'react';
 import { GraduationCap, Users, BookOpen, Plus, Building2 } from 'lucide-react';
 import { Stat } from '../components/dashboard/Stat.jsx';
@@ -5,7 +7,7 @@ import { Stat } from '../components/dashboard/Stat.jsx';
 export function CampusOverview({ staff, page, selected, users, subjects, user, open }) {
   return staff && page === 'Overview' && !selected ? (
     <>
-      <div className="stats">
+      <motion.div className="stats" variants={stagger} initial="hidden" animate="visible">
         <Stat
           label="Students enrolled"
           value={users.filter((u) => u.role === 'student').length}
@@ -26,11 +28,12 @@ export function CampusOverview({ staff, page, selected, users, subjects, user, o
         />
         <Stat
           label="Institute code"
+          animateValue={false}
           value={user.institute_code}
           icon={Building2}
           detail="Share with your students"
         />
-      </div>
+      </motion.div>
       <section className="panel">
         <h2>Your campus starts here</h2>
         <p className="muted">

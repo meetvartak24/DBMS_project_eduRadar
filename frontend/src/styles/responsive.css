@@ -34,10 +34,10 @@
     padding: 15px 12px;
   }
   .stat > div {
-    font-size: 9px;
+    font-size: 11px;
   }
   .stat > strong {
-    font-size: 24px;
+    font-size: 25px;
   }
   .dashboard-grid {
     grid-template-columns: minmax(0, 1.65fr) minmax(230px, 1fr);
@@ -52,7 +52,7 @@
     height: 115px;
   }
   .welcome-strip h2 {
-    font-size: 21px;
+    font-size: 22px;
   }
   .teacher-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -64,7 +64,7 @@
     padding: 30px;
   }
   .auth-top {
-    font-size: 10px;
+    font-size: 12px;
   }
 }
 @media (max-width: 900px) {
@@ -84,14 +84,14 @@
     padding: 25px;
   }
   .story-copy h1 {
-    font-size: 35px;
+    font-size: 36px;
     letter-spacing: -1.5px;
   }
   .story-copy p {
-    font-size: 12px;
+    font-size: 14px;
   }
   .floating {
-    font-size: 8px;
+    font-size: 10px;
     padding: 9px;
   }
   .radar-art > div:nth-child(3) {
@@ -112,7 +112,7 @@
     align-items: flex-start;
   }
   h1 {
-    font-size: 25px;
+    font-size: 26px;
   }
   .welcome-strip {
     padding: 22px;
@@ -168,20 +168,20 @@
     width: 116px;
   }
   .page-heading h1 {
-    font-size: 23px;
+    font-size: 24px;
   }
   .page-heading p {
-    font-size: 10px;
+    font-size: 12px;
   }
   .page-heading .eyebrow {
-    font-size: 7px;
+    font-size: 9px;
     letter-spacing: 1px;
   }
   .welcome-strip h2 {
-    font-size: 20px;
+    font-size: 21px;
   }
   .welcome-strip p {
-    font-size: 10px;
+    font-size: 12px;
   }
   .stats {
     gap: 10px;
@@ -190,20 +190,20 @@
     padding: 16px;
   }
   .stat > div {
-    font-size: 9px;
+    font-size: 11px;
   }
   .stat p {
-    font-size: 8px;
+    font-size: 10px;
   }
   .panel-head {
     flex-wrap: wrap;
   }
   .panel-head .text-btn {
-    font-size: 9px;
+    font-size: 11px;
   }
   .page-footer {
     flex-wrap: wrap;
-    font-size: 8px;
+    font-size: 10px;
   }
   .teacher-grid {
     grid-template-columns: 1fr;
@@ -228,10 +228,10 @@
     grid-template-columns: 1fr 1fr;
   }
   .checklist strong {
-    font-size: 9px;
+    font-size: 11px;
   }
   .checklist > .tag {
-    font-size: 7px;
+    font-size: 9px;
   }
   .modal {
     padding: 22px;
@@ -240,6 +240,6 @@
     gap: 0 10px;
   }
   .panel h2 {
-    font-size: 15px;
+    font-size: 17px;
   }
 }

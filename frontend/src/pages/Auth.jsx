@@ -1,4 +1,6 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { reveal, stagger } from '../constants/motion.js';
 import { useState } from 'react';
 import {
   Radar,
@@ -34,8 +36,8 @@ export function Auth({ onLogin, onPreview }) {
     }
   }
   return (
-    <div className="auth">
-      <section className="auth-story">
+    <motion.div className="auth" variants={stagger} initial="hidden" animate="visible">
+      <motion.section className="auth-story" variants={reveal}>
         <Logo />
         <div className="story-copy">
           <span className="eyebrow">YOUR ACADEMIC COMPASS</span>
@@ -64,8 +66,8 @@ export function Auth({ onLogin, onPreview }) {
         <footer>
           <ShieldCheck size={16} /> One platform. Your own campus.
         </footer>
-      </section>
-      <section className="auth-form">
+      </motion.section>
+      <motion.section className="auth-form" variants={reveal}>
         <div className="auth-top">
           {register ? 'Already part of a campus?' : 'Bring your campus together.'}{' '}
           <button
@@ -170,7 +172,7 @@ export function Auth({ onLogin, onPreview }) {
           <p className="demo-note">Sample data · No account needed</p>
         </div>
         <footer>Made for students. Connected by institutions.</footer>
-      </section>
-    </div>
+      </motion.section>
+    </motion.div>
   );
 }

@@ -1,5 +1,8 @@
 import { useDashboard } from '../hooks/useDashboard.js';
 import React from 'react';
+import { ScrollExperience } from '../components/motion/ScrollExperience.jsx';
+import { AnimatePresence, motion } from 'framer-motion';
+import { reveal } from '../constants/motion.js';
 
 import { ArrowRight, Plus, ShieldCheck, Check } from 'lucide-react';
 
@@ -58,6 +61,7 @@ export function Dashboard({ user, preview, logout }) {
   } = useDashboard({ user, preview });
   return (
     <div className="app-shell">
+      <ScrollExperience />
       <Sidebar
         mobile={mobile}
         user={user}
@@ -74,7 +78,7 @@ export function Dashboard({ user, preview, logout }) {
       />
       <div className="workspace">
         <Topbar mobile={mobile} setMobile={setMobile} page={page} preview={preview} />
-        <main>
+        <motion.main key={page} variants={reveal} initial="hidden" animate="visible">
           {preview && (
             <div className="preview-banner">
               <span>
@@ -198,20 +202,23 @@ export function Dashboard({ user, preview, logout }) {
               <ShieldCheck size={13} /> Private to your institute
             </span>
           </footer>
-        </main>
+        </motion.main>
       </div>
-      {modal && (
-        <AcademicModal
-          busy={busy}
-          setModal={setModal}
-          modal={modal}
-          save={save}
-          users={users}
-          editable={editable}
-          all={all}
-          error={error}
-        />
-      )}
+      <AnimatePresence>
+        {modal && (
+          <AcademicModal
+            key={modal}
+            busy={busy}
+            setModal={setModal}
+            modal={modal}
+            save={save}
+            users={users}
+            editable={editable}
+            all={all}
+            error={error}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

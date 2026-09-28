@@ -24,7 +24,7 @@
   margin-bottom: 25px;
 }
 .story-copy p {
-  font-size: 15px;
+  font-size: 17px;
   color: #6b8172;
 }
 .radar-art {
@@ -61,7 +61,7 @@
   gap: 9px;
   align-items: center;
   color: #48704e;
-  font-size: 11px;
+  font-size: 13px;
 }
 .floating.a {
   left: 0;
@@ -78,7 +78,7 @@
   gap: 8px;
   align-items: center;
   color: #809180;
-  font-size: 11px;
+  font-size: 13px;
 }
 .auth-form {
   display: flex;
@@ -90,7 +90,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: 15px;
-  font-size: 11px;
+  font-size: 13px;
   color: #8e9892;
 }
 .form-wrap {
@@ -103,7 +103,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1px;
   font-weight: 600;
   color: #5b826b;
@@ -112,12 +112,12 @@
   border-radius: 4px;
 }
 .form-wrap h2 {
-  font-size: 32px;
+  font-size: 33px;
   letter-spacing: -1.2px;
   margin: 22px 0 8px;
 }
 .form-wrap > .muted {
-  font-size: 13px;
+  font-size: 15px;
   margin-bottom: 25px;
 }
 .role-tabs {
@@ -132,7 +132,7 @@
   background: none;
   flex: 1;
   padding: 10px 6px;
-  font-size: 11px;
+  font-size: 13px;
   color: #7f8b83;
   text-transform: capitalize;
   border-radius: 5px;
@@ -144,7 +144,7 @@
   font-weight: 600;
 }
 .auth-note {
-  font-size: 11px;
+  font-size: 13px;
   color: #8d978f;
   margin: 18px 0 25px;
   line-height: 1.7;
@@ -154,7 +154,7 @@
   align-items: center;
   gap: 10px;
   color: #9aa69d;
-  font-size: 8px;
+  font-size: 10px;
   letter-spacing: 1.4px;
   margin-bottom: 20px;
 }
@@ -167,7 +167,7 @@
 }
 .demo-note {
   text-align: center;
-  font-size: 10px;
+  font-size: 12px;
   color: #9ba79c;
   margin: 10px 0 0;
 }

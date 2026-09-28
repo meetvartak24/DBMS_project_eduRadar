@@ -1,0 +1,304 @@
+/* Shared palette for the soft charcoal theme. */
+:root {
+  color-scheme: dark;
+  --background: #171d23;
+  --surface: #202830;
+  --surface-raised: #29333d;
+  --border: #39454f;
+  --text: #e6ecef;
+  --muted: #acbbc4;
+  --accent: #87d4bd;
+  --accent-soft: #253f3b;
+  color: var(--text);
+  background: var(--background);
+  scrollbar-color: #52636e var(--background);
+}
+
+body,
+.auth {
+  background: var(--background);
+}
+
+.sidebar,
+.topbar,
+.panel,
+.stat,
+.modal,
+.ring > div {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+.campus,
+.role-tabs,
+.staff-toolbar,
+th {
+  background: var(--surface-raised);
+  border-color: var(--border);
+}
+
+.logo,
+.story-copy h1,
+.welcome-strip h2,
+.stat > strong,
+.ring strong,
+.checklist strong,
+.event strong,
+.empty h3,
+.user-menu,
+.topbar strong,
+td strong {
+  color: var(--text);
+}
+
+.muted,
+.loading p,
+.story-copy p,
+.auth footer,
+.auth-top,
+.auth-note,
+.demo-note,
+.divider,
+.role-tabs button,
+.field,
+.field input::placeholder,
+.campus small,
+.nav-label,
+.sidebar nav button,
+.private-note p,
+.user-menu small,
+.signout,
+.topbar,
+.live-pill,
+.page-heading p,
+.page-heading .field,
+.welcome-strip p,
+.stat > div,
+.stat strong small,
+.stat p,
+.panel-head p,
+.panel-head > svg,
+th,
+td,
+td small,
+th small,
+.out-of,
+.panel-foot,
+.ring span,
+.ring-note,
+.checklist small,
+.event small,
+.page-footer,
+.empty,
+.footnote,
+.teacher-grid p,
+.profile-grid small,
+.search {
+  color: var(--muted);
+}
+
+a,
+.text-btn,
+.logo .logo-end,
+.logo i,
+.eyebrow,
+.preview-banner button,
+.menu-button,
+.stat > div svg,
+.empty svg,
+.radar-art {
+  color: var(--accent);
+}
+
+a:hover,
+.text-btn:hover {
+  color: #b1ecd9;
+}
+
+.primary,
+.logo > span:first-child {
+  background: var(--accent);
+  color: #142f29;
+}
+
+.primary:hover {
+  background: #a4e4ce;
+}
+
+.secondary,
+.attendance-panel .secondary,
+.role-tabs .selected {
+  background: var(--surface-raised);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.secondary:hover,
+.sidebar nav button:hover {
+  background: #34424c;
+  color: var(--text);
+}
+
+.sidebar nav button.active,
+.sidebar nav b,
+.campus-icon,
+.avatar,
+.small-badge,
+.welcome-strip .small-badge,
+.grade,
+.good-tag,
+.tag,
+.check-icon.done,
+.teacher-icon,
+.profile-avatar,
+.success {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.field input,
+.field select,
+.search,
+.search input {
+  background: var(--background);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.search input::placeholder {
+  color: var(--muted);
+}
+
+.field input:focus,
+.field select:focus,
+.search:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px #87d4bd20;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline-color: var(--accent);
+}
+
+.auth-story {
+  background: radial-gradient(ellipse at 40% 50%, #2c4843 0%, #202e32 65%, #1c272d 100%);
+}
+
+.welcome-strip,
+.private-note {
+  background: linear-gradient(115deg, #29443e, #26343c);
+  border-color: #3e5c52;
+}
+
+.private-note,
+.private-note strong,
+.orb {
+  color: var(--accent);
+}
+
+.orb,
+.radar-art > div {
+  border-color: #426057;
+  outline-color: #344d46;
+}
+
+.floating {
+  background: var(--surface-raised);
+  color: var(--accent);
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 30px #00000025;
+}
+
+.preview-banner {
+  background: #243a36;
+  border-color: #3e5c52;
+  color: #bad4cc;
+}
+
+.live-pill,
+td,
+.panel-foot,
+.checklist,
+.event {
+  border-color: var(--border);
+}
+
+.divider::before,
+.divider::after,
+.progress {
+  background: var(--border);
+}
+
+.ring {
+  background: conic-gradient(var(--accent) var(--progress), var(--border) 0);
+}
+
+.progress i,
+.live-pill i,
+.dot {
+  background: var(--accent);
+}
+
+.tag.amber,
+.check-icon,
+.event-icon {
+  background: #443c2c;
+  color: #e7ca8d;
+}
+
+.error,
+.grade.fail {
+  background: #472e32;
+  color: #ffb7b0;
+}
+
+.modal-backdrop {
+  background: #0b111bb3;
+}
+
+.modal {
+  border: 1px solid var(--border);
+  box-shadow: 0 24px 80px #00000050;
+}
+
+::selection {
+  background: #87d4bd40;
+  color: #f1fff9;
+}
+
+/* Small interaction cues complement the page and card animations. */
+.primary,
+.secondary,
+.sidebar nav button {
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .primary:hover,
+  .secondary:hover {
+    transform: translateY(-2px);
+  }
+
+  .sidebar nav button:hover {
+    transform: translateX(3px);
+  }
+
+  .primary:active,
+  .secondary:active {
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0s !important;
+  }
+}

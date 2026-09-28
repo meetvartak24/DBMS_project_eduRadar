@@ -1,3 +1,8 @@
+import { ScrollReveal } from '../components/motion/ScrollReveal.jsx';
+import { WelcomeBanner } from '../components/dashboard/WelcomeBanner.jsx';
+import { AttendanceRing } from '../components/dashboard/AttendanceRing.jsx';
+import { motion } from 'framer-motion';
+import { stagger } from '../constants/motion.js';
 import React from 'react';
 import {
   GraduationCap,
@@ -17,20 +22,14 @@ export function StudentOverview({ page, data, complete, sum, attendance, pending
     page === 'Overview' &&
     data && (
       <>
-        <div className="welcome-strip">
-          <div>
-            <span className="small-badge">
-              {data.profile.branch || 'Student'} · Semester {data.profile.semester}
-            </span>
-            <h2>Your next chapter starts with today.</h2>
-            <p>Stay curious. Stay consistent. You’re making progress.</p>
-          </div>
-          <div className="orb">
-            <GraduationCap size={56} />
-            <span>LEARN · GROW · ACHIEVE</span>
-          </div>
-        </div>
-        <div className="stats">
+        <WelcomeBanner profile={data.profile} />
+        <motion.div
+          className="stats"
+          variants={stagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           <Stat
             label="Cumulative GPA"
             value={gpa(complete)}
@@ -61,9 +60,9 @@ export function StudentOverview({ page, data, complete, sum, attendance, pending
             icon={Trophy}
             detail="Learning beyond the classroom"
           />
-        </div>
+        </motion.div>
         <div className="dashboard-grid">
-          <section className="panel">
+          <ScrollReveal className="panel">
             <div className="panel-head">
               <div>
                 <h2>Academic performance</h2>
@@ -77,8 +76,8 @@ export function StudentOverview({ page, data, complete, sum, attendance, pending
             <div className="panel-foot">
               <span className="dot" /> Marks are published by your institute’s faculty.
             </div>
-          </section>
-          <section className="panel attendance-panel">
+          </ScrollReveal>
+          <ScrollReveal className="panel attendance-panel">
             <div className="panel-head">
               <div>
                 <h2>Showing up matters</h2>
@@ -86,12 +85,7 @@ export function StudentOverview({ page, data, complete, sum, attendance, pending
               </div>
               <CalendarCheck size={19} />
             </div>
-            <div className="ring" style={{ '--progress': attendance * 3.6 + 'deg' }}>
-              <div>
-                <strong>{sum('classes') ? attendance + '%' : '—'}</strong>
-                <span>ATTENDANCE</span>
-              </div>
-            </div>
+            <AttendanceRing attendance={attendance} hasRecords={sum('classes') > 0} />
             <span className="good-tag">
               {sum('classes')
                 ? attendance >= 75
@@ -107,8 +101,8 @@ export function StudentOverview({ page, data, complete, sum, attendance, pending
             <button className="secondary full" onClick={() => setPage('Attendance')}>
               Subject breakdown <ArrowRight size={16} />
             </button>
-          </section>
-          <section className="panel">
+          </ScrollReveal>
+          <ScrollReveal className="panel">
             <div className="panel-head">
               <div>
                 <h2>A little focus goes a long way</h2>
@@ -138,8 +132,8 @@ export function StudentOverview({ page, data, complete, sum, attendance, pending
             ) : (
               <Empty />
             )}
-          </section>
-          <section className="panel achievements">
+          </ScrollReveal>
+          <ScrollReveal className="panel achievements">
             <div className="panel-head">
               <div>
                 <h2>Beyond the books</h2>
@@ -172,7 +166,7 @@ export function StudentOverview({ page, data, complete, sum, attendance, pending
             <button className="text-btn" onClick={() => setPage('Activities')}>
               Explore activities <ArrowUpRight size={15} />
             </button>
-          </section>
+          </ScrollReveal>
         </div>
       </>
     )

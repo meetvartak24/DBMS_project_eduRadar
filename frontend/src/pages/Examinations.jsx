@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion';
+import { stagger } from '../constants/motion.js';
 import React from 'react';
 import { GraduationCap, ClipboardList, Trophy, BookOpen } from 'lucide-react';
 
@@ -11,7 +13,7 @@ export function Examinations({ page, data, complete, semester, graded, rows }) {
     page === 'Examinations' &&
     data && (
       <>
-        <div className="stats">
+        <motion.div className="stats" variants={stagger} initial="hidden" animate="visible">
           <Stat
             label="Cumulative GPA"
             value={gpa(complete)}
@@ -44,7 +46,7 @@ export function Examinations({ page, data, complete, semester, graded, rows }) {
             icon={Trophy}
             detail="Completed results only"
           />
-        </div>
+        </motion.div>
         <section className="panel">
           <h2>Subject-wise results</h2>
           {rows.length ? <Results rows={rows} /> : <Empty />}
