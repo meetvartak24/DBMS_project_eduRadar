@@ -41,6 +41,9 @@ export function Dashboard({ user, preview, logout }) {
     setNotice,
     modal,
     setModal,
+    editingSubject,
+    setEditingSubject,
+    openEditSubject,
     busy,
     query,
     setQuery,
@@ -177,6 +180,7 @@ export function Dashboard({ user, preview, logout }) {
             page={page}
             user={user}
             open={open}
+            openEditSubject={openEditSubject}
             query={query}
             setQuery={setQuery}
             subjects={subjects}
@@ -207,10 +211,14 @@ export function Dashboard({ user, preview, logout }) {
       <AnimatePresence>
         {modal && (
           <AcademicModal
-            key={modal}
+            key={modal + (editingSubject?.id ? `-${editingSubject.id}` : '')}
             busy={busy}
-            setModal={setModal}
+            setModal={(m) => {
+              if (!m) setEditingSubject(null);
+              setModal(m);
+            }}
             modal={modal}
+            editingSubject={editingSubject}
             save={save}
             users={users}
             editable={editable}

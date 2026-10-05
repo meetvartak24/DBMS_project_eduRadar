@@ -6,6 +6,7 @@ export function Directory({
   page,
   user,
   open,
+  openEditSubject,
   query,
   setQuery,
   subjects,
@@ -73,7 +74,30 @@ export function Directory({
                     <td>{page === 'Subjects' ? u.semester : u.email}</td>
                     <td>
                       {page === 'Subjects' ? (
-                        u.faculty_name || 'Unassigned'
+                        <div className="faculty-cell">
+                          <div className="faculty-tag-group">
+                            {u.faculties && u.faculties.length > 0 ? (
+                              u.faculties.map((f) => (
+                                <span key={f.id} className="tag">
+                                  {f.name}
+                                </span>
+                              ))
+                            ) : u.faculty_name ? (
+                              <span className="tag">{u.faculty_name}</span>
+                            ) : (
+                              <span className="muted">Unassigned</span>
+                            )}
+                          </div>
+                          {user.role === 'admin' && (
+                            <button
+                              type="button"
+                              className="text-btn"
+                              onClick={() => openEditSubject && openEditSubject(u)}
+                            >
+                              Edit
+                            </button>
+                          )}
+                        </div>
                       ) : page === 'Students' ? (
                         <button
                           className="text-btn"

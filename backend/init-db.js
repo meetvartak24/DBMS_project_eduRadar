@@ -13,6 +13,9 @@ try {
   await connection.query(
     await readFile(new URL('../database/schema.sql', import.meta.url), 'utf8'),
   );
+  await connection.query(
+    'INSERT IGNORE INTO subject_faculties (institute_id, subject_id, faculty_id) SELECT institute_id, id, faculty_id FROM subjects WHERE faculty_id IS NOT NULL',
+  );
   console.log('EduRadar database initialized.');
 } finally {
   await connection.end();

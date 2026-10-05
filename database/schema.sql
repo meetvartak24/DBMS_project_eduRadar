@@ -39,6 +39,14 @@ CREATE TABLE IF NOT EXISTS subjects (
   FOREIGN KEY(institute_id) REFERENCES institutes(id),
   FOREIGN KEY(institute_id,faculty_id) REFERENCES users(institute_id,id)
 );
+CREATE TABLE IF NOT EXISTS subject_faculties (
+  institute_id INT NOT NULL,
+  subject_id INT NOT NULL,
+  faculty_id INT NOT NULL,
+  PRIMARY KEY(institute_id,subject_id,faculty_id),
+  FOREIGN KEY(institute_id,subject_id) REFERENCES subjects(institute_id,id) ON DELETE CASCADE,
+  FOREIGN KEY(institute_id,faculty_id) REFERENCES users(institute_id,id) ON DELETE CASCADE
+);
 CREATE TABLE IF NOT EXISTS records (
   institute_id INT NOT NULL,
   student_id INT NOT NULL,
