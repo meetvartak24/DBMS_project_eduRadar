@@ -46,7 +46,7 @@ test('MySQL workflow: publish records and enforce role/tenant isolation', async 
         .expect(201)
     ).body.id;
   const facultyId = await addUser(a, 'faculty', 'FAC1');
-  await addUser(a, 'faculty', 'FAC2');
+  const fac2Id = await addUser(a, 'faculty', 'FAC2');
   const studentA = await addUser(a, 'student', 'ROLL1');
   const studentB = await addUser(b, 'student', 'ROLL1');
   const subjectA = (
@@ -99,6 +99,28 @@ test('MySQL workflow: publish records and enforce role/tenant isolation', async 
   await b.put(`/api/students/${studentB}/records/${subjectA}`).send(record).expect(404);
   await student.put(`/api/students/${studentA}/records/${subjectA}`).send(record).expect(403);
   await unassigned.put(`/api/students/${studentA}/records/${subjectA}`).send(record).expect(403);
+  await a
+    .put(`/api/subjects/${subjectA}`)
+    .send({
+      name: 'DBMS',
+      code: 'CS601',
+      semester: 6,
+      credits: 3,
+      faculty_ids: [facultyId, fac2Id],
+    })
+    .expect(200);
+  const subjectsA = (await a.get('/api/subjects').expect(200)).body;
+  const currentSubject = subjectsA.find((s) => s.id === subjectA);
+  assert.equal(currentSubject.faculties.length, 2);
+  assert.deepEqual(currentSubject.faculty_ids.sort(), [facultyId, fac2Id].sort());
+
+  await unassigned
+    .put(`/api/students/${studentA}/records/${subjectA}`)
+    .send({ ...record, mse: 26 })
+    .expect(200);
+  const studentData = (await student.get('/api/students/' + studentA).expect(200)).body;
+  assert.equal(studentData.records[0].mse, 26);
+  assert.equal(studentData.records[0].faculties.length, 2);
   await faculty.post('/api/users').send({}).expect(403);
   await faculty
     .put(`/api/students/${studentA}/records/${subjectA}`)

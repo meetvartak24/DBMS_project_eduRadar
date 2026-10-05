@@ -261,6 +261,27 @@ td,
   border: 1px solid var(--border);
   box-shadow: 0 24px 80px #00000050;
 }
+.faculty-checklist {
+  background: var(--surface-raised);
+  border-color: var(--border);
+}
+.faculty-check-item {
+  background: var(--surface);
+  border-color: var(--border);
+}
+.faculty-check-item:hover {
+  background: var(--surface-raised);
+}
+.faculty-check-item.checked {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.faculty-check-text strong {
+  color: var(--text);
+}
+.faculty-check-text small {
+  color: var(--muted);
+}
 
 ::selection {
   background: #87d4bd40;

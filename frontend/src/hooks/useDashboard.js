@@ -14,6 +14,7 @@ export function useDashboard({ user, preview }) {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [modal, setModal] = useState(null);
+  const [editingSubject, setEditingSubject] = useState(null);
   const [busy, setBusy] = useState(false);
   const [query, setQuery] = useState('');
   const [mobile, setMobile] = useState(false);
@@ -80,23 +81,39 @@ export function useDashboard({ user, preview }) {
   function open(type) {
     setError('');
     setNotice('');
+    setEditingSubject(null);
     setModal(type);
+  }
+  function openEditSubject(subject) {
+    setError('');
+    setNotice('');
+    setEditingSubject(subject);
+    setModal('subject');
   }
   async function save(e) {
     e.preventDefault();
     setBusy(true);
     setError('');
-    const b = Object.fromEntries(new FormData(e.target));
+    const formData = new FormData(e.target);
+    const b = Object.fromEntries(formData);
     try {
       if (modal === 'student' || modal === 'faculty') {
         await api('/users', 'POST', { ...b, role: modal, semester: Number(b.semester || 1) });
       } else if (modal === 'subject') {
-        await api('/subjects', 'POST', {
-          ...b,
+        const faculty_ids = formData.getAll('faculty_ids').map(Number).filter(Boolean);
+        const payload = {
+          name: b.name,
+          code: b.code,
           semester: Number(b.semester),
           credits: Number(b.credits),
-          faculty_id: b.faculty_id ? Number(b.faculty_id) : null,
-        });
+          faculty_ids,
+          faculty_id: faculty_ids[0] ?? null,
+        };
+        if (editingSubject?.id) {
+          await api(`/subjects/${editingSubject.id}`, 'PUT', payload);
+        } else {
+          await api('/subjects', 'POST', payload);
+        }
       } else if (modal === 'record') {
         const subjectId = b.subject_id;
         delete b.subject_id;
@@ -108,6 +125,7 @@ export function useDashboard({ user, preview }) {
         await api('/password', 'POST', b);
       }
       setModal(null);
+      setEditingSubject(null);
       setNotice('Saved successfully.');
       await load();
     } catch (e) {
@@ -116,7 +134,13 @@ export function useDashboard({ user, preview }) {
       setBusy(false);
     }
   }
-  const editable = subjects.filter((s) => user.role === 'admin' || s.faculty_id === user.id);
+  const editable = subjects.filter(
+    (s) =>
+      user.role === 'admin' ||
+      s.faculty_id === user.id ||
+      (Array.isArray(s.faculty_ids) && s.faculty_ids.includes(user.id)) ||
+      (Array.isArray(s.faculties) && s.faculties.some((f) => f.id === user.id)),
+  );
 
   return {
     staff,
@@ -136,6 +160,9 @@ export function useDashboard({ user, preview }) {
     setNotice,
     modal,
     setModal,
+    editingSubject,
+    setEditingSubject,
+    openEditSubject,
     busy,
     query,
     setQuery,

@@ -184,35 +184,124 @@ app.post('/api/users', admin, async (req, res) => {
   );
   res.status(201).json({ id: r.insertId });
 });
+const subjectSchema = z.object({
+  name: str,
+  code: z.string().trim().min(1).max(32),
+  semester: z.number().int().min(1).max(12),
+  credits: z.number().int().min(1).max(10),
+  faculty_id: z.number().int().positive().nullable().optional(),
+  faculty_ids: z.array(z.number().int().positive()).optional(),
+});
+async function resolveFacultyIds(instituteId, { faculty_id, faculty_ids }) {
+  let ids = Array.isArray(faculty_ids) ? [...new Set(faculty_ids)] : [];
+  if (faculty_id && !ids.includes(faculty_id)) ids.push(faculty_id);
+  if (ids.length > 0) {
+    const placeholders = ids.map(() => '?').join(',');
+    const [f] = await db.query(
+      `SELECT id FROM users WHERE institute_id=? AND role='faculty' AND id IN (${placeholders})`,
+      [instituteId, ...ids],
+    );
+    if (f.length !== ids.length) {
+      fail(400, 'Select a faculty member from this institute');
+    }
+  }
+  return ids;
+}
 app.get('/api/subjects', async (req, res) => {
   const [rows] = await db.execute(
-    'SELECT s.*,u.name faculty_name,u.email faculty_email FROM subjects s LEFT JOIN users u ON u.id=s.faculty_id AND u.institute_id=s.institute_id WHERE s.institute_id=? ORDER BY s.semester,s.name',
+    'SELECT s.*,u.name legacy_faculty_name,u.email legacy_faculty_email FROM subjects s LEFT JOIN users u ON u.id=s.faculty_id AND u.institute_id=s.institute_id WHERE s.institute_id=? ORDER BY s.semester,s.name',
     [req.user.institute_id],
   );
+  const [assignments] = await db.execute(
+    `SELECT sf.subject_id, u.id, u.name, u.email
+     FROM subject_faculties sf
+     JOIN users u ON u.id=sf.faculty_id AND u.institute_id=sf.institute_id
+     WHERE sf.institute_id=?
+     ORDER BY u.name`,
+    [req.user.institute_id],
+  );
+  const map = new Map();
+  for (const a of assignments) {
+    if (!map.has(a.subject_id)) map.set(a.subject_id, []);
+    map.get(a.subject_id).push({ id: a.id, name: a.name, email: a.email });
+  }
+  for (const s of rows) {
+    let faculties = map.get(s.id) || [];
+    if (!faculties.length && s.faculty_id && s.legacy_faculty_name) {
+      faculties = [{ id: s.faculty_id, name: s.legacy_faculty_name, email: s.legacy_faculty_email }];
+    }
+    s.faculties = faculties;
+    s.faculty_ids = faculties.map((f) => f.id);
+    s.faculty_name = faculties.map((f) => f.name).join(', ') || null;
+    s.faculty_email = faculties.map((f) => f.email).join(', ') || null;
+    s.faculty_id = faculties[0]?.id ?? s.faculty_id ?? null;
+    delete s.legacy_faculty_name;
+    delete s.legacy_faculty_email;
+  }
   res.json(rows);
 });
 app.post('/api/subjects', admin, async (req, res) => {
-  const b = z
-    .object({
-      name: str,
-      code: z.string().trim().min(1).max(32),
-      semester: z.number().int().min(1).max(12),
-      credits: z.number().int().min(1).max(10),
-      faculty_id: z.number().int().positive().nullable(),
-    })
-    .parse(req.body);
-  if (b.faculty_id) {
-    const [f] = await db.execute(
-      "SELECT id FROM users WHERE id=? AND institute_id=? AND role='faculty'",
-      [b.faculty_id, req.user.institute_id],
+  const b = subjectSchema.parse(req.body);
+  const facultyIds = await resolveFacultyIds(req.user.institute_id, b);
+  const primaryFacultyId = facultyIds[0] ?? null;
+  const c = await db.getConnection();
+  let id;
+  try {
+    await c.beginTransaction();
+    const [r] = await c.execute(
+      'INSERT INTO subjects(institute_id,name,code,semester,credits,faculty_id) VALUES (?,?,?,?,?,?)',
+      [req.user.institute_id, b.name, b.code, b.semester, b.credits, primaryFacultyId],
     );
-    if (!f.length) fail(400, 'Select a faculty member from this institute');
+    id = r.insertId;
+    for (const fid of facultyIds) {
+      await c.execute(
+        'INSERT INTO subject_faculties(institute_id,subject_id,faculty_id) VALUES (?,?,?)',
+        [req.user.institute_id, id, fid],
+      );
+    }
+    await c.commit();
+  } catch (e) {
+    await c.rollback();
+    throw e;
+  } finally {
+    c.release();
   }
-  const [r] = await db.execute(
-    'INSERT INTO subjects(institute_id,name,code,semester,credits,faculty_id) VALUES (?,?,?,?,?,?)',
-    [req.user.institute_id, b.name, b.code, b.semester, b.credits, b.faculty_id],
-  );
-  res.status(201).json({ id: r.insertId });
+  res.status(201).json({ id });
+});
+app.put('/api/subjects/:id', admin, async (req, res) => {
+  const b = subjectSchema.parse(req.body);
+  const [existing] = await db.execute('SELECT * FROM subjects WHERE institute_id=? AND id=?', [
+    req.user.institute_id,
+    req.params.id,
+  ]);
+  if (!existing[0]) fail(404, 'Subject not found');
+  const facultyIds = await resolveFacultyIds(req.user.institute_id, b);
+  const primaryFacultyId = facultyIds[0] ?? null;
+  const c = await db.getConnection();
+  try {
+    await c.beginTransaction();
+    await c.execute(
+      'UPDATE subjects SET name=?,code=?,semester=?,credits=?,faculty_id=? WHERE institute_id=? AND id=?',
+      [b.name, b.code, b.semester, b.credits, primaryFacultyId, req.user.institute_id, req.params.id],
+    );
+    await c.execute('DELETE FROM subject_faculties WHERE institute_id=? AND subject_id=?', [
+      req.user.institute_id,
+      req.params.id,
+    ]);
+    for (const fid of facultyIds) {
+      await c.execute(
+        'INSERT INTO subject_faculties(institute_id,subject_id,faculty_id) VALUES (?,?,?)',
+        [req.user.institute_id, req.params.id, fid],
+      );
+    }
+    await c.commit();
+  } catch (e) {
+    await c.rollback();
+    throw e;
+  } finally {
+    c.release();
+  }
+  res.json({ ok: true });
 });
 async function student(req, id) {
   if (req.user.role === 'student' && req.user.id !== Number(id))
@@ -227,9 +316,34 @@ async function student(req, id) {
 app.get('/api/students/:id', async (req, res) => {
   const profile = await student(req, req.params.id);
   const [records] = await db.execute(
-    'SELECT r.*,s.name,s.code,s.semester,s.credits,u.name faculty_name,u.email faculty_email FROM records r JOIN subjects s ON s.id=r.subject_id AND s.institute_id=r.institute_id LEFT JOIN users u ON u.id=s.faculty_id WHERE r.institute_id=? AND r.student_id=? ORDER BY s.semester,s.name',
+    'SELECT r.*,s.name,s.code,s.semester,s.credits,u.name legacy_faculty_name,u.email legacy_faculty_email FROM records r JOIN subjects s ON s.id=r.subject_id AND s.institute_id=r.institute_id LEFT JOIN users u ON u.id=s.faculty_id WHERE r.institute_id=? AND r.student_id=? ORDER BY s.semester,s.name',
     [req.user.institute_id, profile.id],
   );
+  const [assignments] = await db.execute(
+    `SELECT sf.subject_id, u.id, u.name, u.email
+     FROM subject_faculties sf
+     JOIN users u ON u.id=sf.faculty_id AND u.institute_id=sf.institute_id
+     WHERE sf.institute_id=?
+     ORDER BY u.name`,
+    [req.user.institute_id],
+  );
+  const map = new Map();
+  for (const a of assignments) {
+    if (!map.has(a.subject_id)) map.set(a.subject_id, []);
+    map.get(a.subject_id).push({ id: a.id, name: a.name, email: a.email });
+  }
+  for (const r of records) {
+    let faculties = map.get(r.subject_id) || [];
+    if (!faculties.length && r.legacy_faculty_name) {
+      faculties = [{ id: r.faculty_id, name: r.legacy_faculty_name, email: r.legacy_faculty_email }];
+    }
+    r.faculties = faculties;
+    r.faculty_ids = faculties.map((f) => f.id);
+    r.faculty_name = faculties.map((f) => f.name).join(', ') || null;
+    r.faculty_email = faculties.map((f) => f.email).join(', ') || null;
+    delete r.legacy_faculty_name;
+    delete r.legacy_faculty_email;
+  }
   const [events] = await db.execute(
     'SELECT * FROM events WHERE institute_id=? AND student_id=? ORDER BY event_date DESC',
     [req.user.institute_id, profile.id],
@@ -245,8 +359,14 @@ app.put('/api/students/:id/records/:subjectId', staff, async (req, res) => {
   ]);
   const subject = subjects[0];
   if (!subject) fail(404, 'Subject not found');
-  if (req.user.role === 'faculty' && subject.faculty_id !== req.user.id)
-    fail(403, 'You can only update subjects assigned to you');
+  if (req.user.role === 'faculty') {
+    const [assigned] = await db.execute(
+      'SELECT 1 FROM subject_faculties WHERE institute_id=? AND subject_id=? AND faculty_id=?',
+      [req.user.institute_id, subject.id, req.user.id],
+    );
+    if (!assigned.length && subject.faculty_id !== req.user.id)
+      fail(403, 'You can only update subjects assigned to you');
+  }
   const c = await db.getConnection();
   try {
     await c.beginTransaction();
