@@ -57,8 +57,14 @@ async function session(res, userId) {
 }
 app.get('/api/health', async (req, res) => {
   try {
-    await db.query('SELECT 1');
-    res.json({ status: 'ok', database: options.database, host: options.host, user: options.user });
+    const [tables] = await db.query('SHOW TABLES');
+    res.json({
+      status: 'ok',
+      database: options.database,
+      host: options.host,
+      user: options.user,
+      tables: tables.map((r) => Object.values(r)[0]),
+    });
   } catch (err) {
     res.status(500).json({
       status: 'database_error',
@@ -458,6 +464,6 @@ app.use((err, req, res, next) => {
   if (err.status) return res.status(err.status).json({ error: err.message });
   console.error(err.code || err.message);
   res.status(500).json({
-    error: 'Unable to complete the request. Check the database connection and try again.',
+    error: err.message || 'Unable to complete the request. Check the database connection and try again.',
   });
 });
