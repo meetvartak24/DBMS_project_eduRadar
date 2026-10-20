@@ -18,10 +18,16 @@ import { Field } from '../components/forms/Field.jsx';
 import { PWAInstallButton } from '../components/common/PWAInstallButton.jsx';
 
 export function Auth({ onLogin, onPreview, pwa }) {
-  const [register, setRegister] = useState(false);
-  const [role, setRole] = useState('student');
+  const [register, setRegister] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return new URLSearchParams(window.location.search).get('register') === 'true';
+    }
+    return false;
+  });
+  const [role, setRole] = useState('admin');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+
   async function submit(e) {
     e.preventDefault();
     setBusy(true);
@@ -36,6 +42,7 @@ export function Auth({ onLogin, onPreview, pwa }) {
       setBusy(false);
     }
   }
+
   return (
     <motion.div className="auth" variants={stagger} initial="hidden" animate="visible">
       <motion.section className="auth-story" variants={reveal}>
@@ -70,9 +77,10 @@ export function Auth({ onLogin, onPreview, pwa }) {
       </motion.section>
       <motion.section className="auth-form" variants={reveal}>
         <div className="auth-top">
-          {register ? 'Already part of a campus?' : 'Bring your campus together.'}{' '}
+          {register ? 'Already part of a campus?' : 'New institute?'}{' '}
           <button
             className="text-btn"
+            type="button"
             onClick={() => {
               setRegister(!register);
               setError('');
@@ -85,44 +93,69 @@ export function Auth({ onLogin, onPreview, pwa }) {
           <span className="small-badge">
             <Building2 size={14} /> THE CONNECTED CAMPUS
           </span>
-          <h2>{register ? 'Welcome, institutes.' : 'Welcome back.'}</h2>
+          <h2>{register ? 'Create Institute Account' : 'Welcome back.'}</h2>
           <p className="muted">
             {register
               ? 'Create your institute’s private academic workspace.'
               : 'A little clarity for everything ahead.'}
           </p>
-          {!register && (
-            <div className="role-tabs">
-              {['student', 'faculty', 'admin'].map((r) => (
-                <button key={r} className={role === r ? 'selected' : ''} onClick={() => setRole(r)}>
-                  {r === 'admin' ? 'Institute admin' : r}
-                </button>
-              ))}
-            </div>
-          )}
+
+          <div className="role-tabs">
+            {['student', 'faculty', 'admin'].map((r) => (
+              <button
+                key={r}
+                type="button"
+                className={!register && role === r ? 'selected' : ''}
+                onClick={() => {
+                  setRegister(false);
+                  setRole(r);
+                  setError('');
+                }}
+              >
+                {r === 'admin' ? 'Institute admin' : r}
+              </button>
+            ))}
+            <button
+              type="button"
+              className={register ? 'selected' : ''}
+              onClick={() => {
+                setRegister(true);
+                setError('');
+              }}
+            >
+              + Register
+            </button>
+          </div>
+
           <form onSubmit={submit}>
             {register && (
               <>
                 <Field
                   label="Institute name"
                   name="instituteName"
-                  placeholder="Your college or university"
+                  placeholder="e.g. Westbridge Institute"
                   required
                   maxLength={160}
                 />
-                <Field label="Your name" name="name" required />
+                <Field label="Your name" name="name" placeholder="Admin Full Name" required />
               </>
             )}
             <Field
               label="Institute code"
               name="code"
-              placeholder="e.g. WESTBRIDGE"
+              placeholder={register ? 'e.g. WESTBRIDGE' : 'e.g. WESTBRIDGE'}
               required
               pattern="[A-Za-z0-9-]{3,32}"
               maxLength={32}
             />
             {register ? (
-              <Field label="Administrator email" type="email" name="email" required />
+              <Field
+                label="Administrator email"
+                type="email"
+                name="email"
+                placeholder="admin@college.edu"
+                required
+              />
             ) : (
               <Field
                 label={
@@ -134,7 +167,7 @@ export function Auth({ onLogin, onPreview, pwa }) {
                 }
                 name="identifier"
                 placeholder={
-                  role === 'student' ? 'Enter your roll number' : 'Enter your sign-in ID'
+                  role === 'student' ? 'Enter your roll number' : 'Enter your sign-in ID / email'
                 }
                 required
               />
@@ -157,6 +190,17 @@ export function Auth({ onLogin, onPreview, pwa }) {
             <button className="primary full" disabled={busy}>
               {busy ? 'Please wait…' : register ? 'Create institute' : 'Sign in to your campus'}
               <ArrowRight size={17} />
+            </button>
+            <button
+              type="button"
+              className="secondary full"
+              style={{ marginTop: '10px', borderColor: 'var(--accent)', color: 'var(--accent)' }}
+              onClick={() => {
+                setRegister(!register);
+                setError('');
+              }}
+            >
+              {register ? '← Already have an account? Sign In' : '+ Register New Institute'}
             </button>
           </form>
           <p className="auth-note">
