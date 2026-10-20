@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises';
 import express from 'express';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -57,12 +58,21 @@ async function session(res, userId) {
 }
 app.get('/api/health', async (req, res) => {
   try {
+    const [check] = await db.query("SHOW TABLES LIKE 'institutes'");
+    if (check.length === 0) {
+      const schemaSql = await readFile(new URL('../database/schema.sql', import.meta.url), 'utf8');
+      const statements = schemaSql
+        .split(';')
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+      for (const statement of statements) {
+        await db.query(statement);
+      }
+    }
     const [tables] = await db.query('SHOW TABLES');
     res.json({
       status: 'ok',
       database: options.database,
-      host: options.host,
-      user: options.user,
       tables: tables.map((r) => Object.values(r)[0]),
     });
   } catch (err) {
@@ -70,9 +80,6 @@ app.get('/api/health', async (req, res) => {
       status: 'database_error',
       message: err.message,
       code: err.code,
-      host: options.host,
-      database: options.database,
-      user: options.user,
     });
   }
 });
