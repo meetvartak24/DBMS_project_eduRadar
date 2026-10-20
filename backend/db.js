@@ -3,9 +3,14 @@ import { fileURLToPath } from 'node:url';
 dotenv.config({ path: fileURLToPath(new URL('./.env', import.meta.url)) });
 import mysql from 'mysql2/promise';
 
+let dbUrl = process.env.DATABASE_URL;
+if (dbUrl && (dbUrl.endsWith('/sys') || dbUrl.includes('/sys?') || dbUrl.includes('/sys/'))) {
+  dbUrl = dbUrl.replace(/\/sys(?=[\/?]|$)/, '/test');
+}
+
 const isTiDB =
   (process.env.DB_HOST || '').includes('tidbcloud.com') ||
-  (process.env.DATABASE_URL || '').includes('tidbcloud.com');
+  (dbUrl || '').includes('tidbcloud.com');
 const useSSL = process.env.DB_SSL === 'true' || isTiDB;
 
 const sslConfig = useSSL
@@ -15,9 +20,14 @@ const sslConfig = useSSL
     }
   : undefined;
 
-export const options = process.env.DATABASE_URL
+let dbName = process.env.DB_NAME;
+if (!dbName || dbName === 'sys') {
+  dbName = isTiDB ? 'test' : 'eduradar';
+}
+
+export const options = dbUrl
   ? {
-      uri: process.env.DATABASE_URL,
+      uri: dbUrl,
       decimalNumbers: true,
       ...(sslConfig ? { ssl: sslConfig } : {}),
     }
@@ -26,15 +36,15 @@ export const options = process.env.DATABASE_URL
       port: Number(process.env.DB_PORT || (isTiDB ? 4000 : 3306)),
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASSWORD || '',
-      database: process.env.DB_NAME || (isTiDB ? 'test' : 'eduradar'),
+      database: dbName,
       decimalNumbers: true,
       ...(sslConfig ? { ssl: sslConfig } : {}),
     };
 
 export const db = mysql.createPool(
-  process.env.DATABASE_URL
+  dbUrl
     ? {
-        uri: process.env.DATABASE_URL,
+        uri: dbUrl,
         decimalNumbers: true,
         ...(sslConfig ? { ssl: sslConfig } : {}),
         connectionLimit: 10,
