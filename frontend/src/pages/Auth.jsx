@@ -15,8 +15,9 @@ import { api } from '../services/api.js';
 
 import { Logo } from '../components/common/Logo.jsx';
 import { Field } from '../components/forms/Field.jsx';
+import { PWAInstallButton } from '../components/common/PWAInstallButton.jsx';
 
-export function Auth({ onLogin, onPreview }) {
+export function Auth({ onLogin, onPreview, pwa }) {
   const [register, setRegister] = useState(false);
   const [role, setRole] = useState('student');
   const [error, setError] = useState('');
@@ -170,6 +171,7 @@ export function Auth({ onLogin, onPreview }) {
             Explore the student demo <ArrowUpRight size={16} />
           </button>
           <p className="demo-note">Sample data · No account needed</p>
+          {pwa && <PWAInstallButton pwa={pwa} className="auth-btn" />}
         </div>
         <footer>Made for students. Connected by institutions.</footer>
       </motion.section>

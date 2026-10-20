@@ -228,7 +228,9 @@ app.get('/api/subjects', async (req, res) => {
   for (const s of rows) {
     let faculties = map.get(s.id) || [];
     if (!faculties.length && s.faculty_id && s.legacy_faculty_name) {
-      faculties = [{ id: s.faculty_id, name: s.legacy_faculty_name, email: s.legacy_faculty_email }];
+      faculties = [
+        { id: s.faculty_id, name: s.legacy_faculty_name, email: s.legacy_faculty_email },
+      ];
     }
     s.faculties = faculties;
     s.faculty_ids = faculties.map((f) => f.id);
@@ -282,7 +284,15 @@ app.put('/api/subjects/:id', admin, async (req, res) => {
     await c.beginTransaction();
     await c.execute(
       'UPDATE subjects SET name=?,code=?,semester=?,credits=?,faculty_id=? WHERE institute_id=? AND id=?',
-      [b.name, b.code, b.semester, b.credits, primaryFacultyId, req.user.institute_id, req.params.id],
+      [
+        b.name,
+        b.code,
+        b.semester,
+        b.credits,
+        primaryFacultyId,
+        req.user.institute_id,
+        req.params.id,
+      ],
     );
     await c.execute('DELETE FROM subject_faculties WHERE institute_id=? AND subject_id=?', [
       req.user.institute_id,
@@ -335,7 +345,9 @@ app.get('/api/students/:id', async (req, res) => {
   for (const r of records) {
     let faculties = map.get(r.subject_id) || [];
     if (!faculties.length && r.legacy_faculty_name) {
-      faculties = [{ id: r.faculty_id, name: r.legacy_faculty_name, email: r.legacy_faculty_email }];
+      faculties = [
+        { id: r.faculty_id, name: r.legacy_faculty_name, email: r.legacy_faculty_email },
+      ];
     }
     r.faculties = faculties;
     r.faculty_ids = faculties.map((f) => f.id);

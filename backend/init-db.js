@@ -4,12 +4,16 @@ import { options, db } from './db.js';
 if (!/^[a-zA-Z0-9_]+$/.test(options.database)) throw Error('Invalid database name');
 const connection = await mysql.createConnection({
   ...options,
-  database: undefined,
+  database: options.database || undefined,
   multipleStatements: true,
 });
 try {
-  await connection.query(`CREATE DATABASE IF NOT EXISTS \`${options.database}\``);
-  await connection.changeUser({ database: options.database });
+  try {
+    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${options.database}\``);
+    await connection.changeUser({ database: options.database });
+  } catch {
+    // If the database already exists or the user has scoped privileges to the database, proceed
+  }
   await connection.query(
     await readFile(new URL('../database/schema.sql', import.meta.url), 'utf8'),
   );

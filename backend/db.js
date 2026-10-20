@@ -9,5 +9,8 @@ export const options = {
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'eduradar',
   decimalNumbers: true,
+  ...(process.env.DB_SSL === 'true'
+    ? { ssl: { rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false' } }
+    : {}),
 };
 export const db = mysql.createPool({ ...options, connectionLimit: 10 });
