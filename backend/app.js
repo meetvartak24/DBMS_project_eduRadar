@@ -3,7 +3,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { randomBytes } from 'node:crypto';
 import { z } from 'zod';
-import { db } from './db.js';
+import { db, options } from './db.js';
 import { hashPassword, verifyPassword, digest, recordSchema } from './domain.js';
 export const app = express();
 app.use(helmet());
@@ -56,8 +56,18 @@ async function session(res, userId) {
   });
 }
 app.get('/api/health', async (req, res) => {
-  await db.query('SELECT 1');
-  res.json({ status: 'ok' });
+  try {
+    await db.query('SELECT 1');
+    res.json({ status: 'ok', database: options.database, host: options.host });
+  } catch (err) {
+    res.status(500).json({
+      status: 'database_error',
+      message: err.message,
+      code: err.code,
+      host: options.host,
+      database: options.database,
+    });
+  }
 });
 app.post('/api/register', authLimit, async (req, res) => {
   const b = z
