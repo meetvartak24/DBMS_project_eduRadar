@@ -58,7 +58,7 @@ async function session(res, userId) {
 app.get('/api/health', async (req, res) => {
   try {
     await db.query('SELECT 1');
-    res.json({ status: 'ok', database: options.database, host: options.host });
+    res.json({ status: 'ok', database: options.database, host: options.host, user: options.user });
   } catch (err) {
     res.status(500).json({
       status: 'database_error',
@@ -66,6 +66,7 @@ app.get('/api/health', async (req, res) => {
       code: err.code,
       host: options.host,
       database: options.database,
+      user: options.user,
     });
   }
 });
