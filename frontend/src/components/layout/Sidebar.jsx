@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { LogOut, ShieldCheck, Building2 } from 'lucide-react';
 import { icons } from '../../constants/navigation.js';
 import { Logo } from '../common/Logo.jsx';
+import { PWAInstallButton } from '../common/PWAInstallButton.jsx';
 
 export function Sidebar({
   mobile,
@@ -17,6 +18,7 @@ export function Sidebar({
   pending,
   logout,
   setError,
+  pwa,
 }) {
   return (
     <aside className={mobile ? 'sidebar mobile-open' : 'sidebar'}>
@@ -66,6 +68,7 @@ export function Sidebar({
           <strong>Your campus. Your space.</strong>
           <p>Academic information, securely connected.</p>
         </div>
+        {pwa && <PWAInstallButton pwa={pwa} className="sidebar-btn" />}
         <button
           className="user-menu"
           onClick={() => {

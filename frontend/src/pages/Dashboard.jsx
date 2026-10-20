@@ -22,7 +22,7 @@ import { Profile } from './Profile.jsx';
 import { Directory } from './Directory.jsx';
 import { SettingsPage } from './SettingsPage.jsx';
 
-export function Dashboard({ user, preview, logout }) {
+export function Dashboard({ user, preview, pwa, logout }) {
   const {
     staff,
     page,
@@ -78,9 +78,10 @@ export function Dashboard({ user, preview, logout }) {
         pending={pending}
         logout={logout}
         setError={setError}
+        pwa={pwa}
       />
       <div className="workspace">
-        <Topbar mobile={mobile} setMobile={setMobile} page={page} preview={preview} />
+        <Topbar mobile={mobile} setMobile={setMobile} page={page} preview={preview} pwa={pwa} />
         <motion.main key={page} variants={reveal} initial="hidden" animate="visible">
           {preview && (
             <div className="preview-banner">

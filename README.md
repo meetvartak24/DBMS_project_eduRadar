@@ -14,6 +14,16 @@ Prerequisites: Node.js 20.19+ or 22.12+, npm, and a running MySQL 8 server.
 
 The **Explore the student demo** button opens an explicitly labelled, read-only preview without requiring MySQL. Real accounts and records always use MySQL; there is no automatic in-memory fallback.
 
+## Progressive Web App (PWA)
+
+EduRadar is configured as a full **Progressive Web App (PWA)**, allowing users to install it directly onto Android phones, iPhones, iPads, Windows PCs, and macOS without app store overhead:
+
+- **Home Screen & Desktop Installation**: Includes standard and maskable app icons, `manifest.webmanifest`, standalone launch mode, and in-app "Install App" buttons on the login screen, sidebar, and topbar.
+- **Offline Caching**: Uses a Workbox service worker (`sw.js`) to cache application assets (HTML, CSS, JS, fonts, icons) so the app shell and demo experience load instantly even when offline or experiencing poor network conditions.
+- **Offline Indicator**: Detects network connectivity changes and alerts the user with an offline banner and indicator badge.
+- **Mobile Optimized**: Enhanced with viewport safe-area padding for mobile notches and home bars (`env(safe-area-inset-*)`), smooth touch feedback, and standalone display styling.
+- **Regenerate Icons**: Run `npm run generate:icons -w frontend` to regenerate the icon suite (`pwa-192x192.png`, `pwa-512x512.png`, maskable variants, `apple-touch-icon.png`, and `favicon.png`).
+
 ## Use your institute
 
 1. Register an institute with a unique institute code and administrator email/password.

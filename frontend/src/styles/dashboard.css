@@ -557,7 +557,9 @@ tr:last-child td {
   padding: 8px 10px;
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
   background: white;
   border: 1px solid #edf2ed;
 }
@@ -604,4 +606,3 @@ tr:last-child td {
   gap: 10px;
   flex-wrap: wrap;
 }
-

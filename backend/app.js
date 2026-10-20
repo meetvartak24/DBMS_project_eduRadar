@@ -3,7 +3,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { randomBytes } from 'node:crypto';
 import { z } from 'zod';
-import { db } from './db.js';
+import { db, options } from './db.js';
 import { hashPassword, verifyPassword, digest, recordSchema } from './domain.js';
 export const app = express();
 app.use(helmet());
@@ -56,8 +56,18 @@ async function session(res, userId) {
   });
 }
 app.get('/api/health', async (req, res) => {
-  await db.query('SELECT 1');
-  res.json({ status: 'ok' });
+  try {
+    await db.query('SELECT 1');
+    res.json({ status: 'ok', database: options.database, host: options.host });
+  } catch (err) {
+    res.status(500).json({
+      status: 'database_error',
+      message: err.message,
+      code: err.code,
+      host: options.host,
+      database: options.database,
+    });
+  }
 });
 app.post('/api/register', authLimit, async (req, res) => {
   const b = z
@@ -228,7 +238,9 @@ app.get('/api/subjects', async (req, res) => {
   for (const s of rows) {
     let faculties = map.get(s.id) || [];
     if (!faculties.length && s.faculty_id && s.legacy_faculty_name) {
-      faculties = [{ id: s.faculty_id, name: s.legacy_faculty_name, email: s.legacy_faculty_email }];
+      faculties = [
+        { id: s.faculty_id, name: s.legacy_faculty_name, email: s.legacy_faculty_email },
+      ];
     }
     s.faculties = faculties;
     s.faculty_ids = faculties.map((f) => f.id);
@@ -282,7 +294,15 @@ app.put('/api/subjects/:id', admin, async (req, res) => {
     await c.beginTransaction();
     await c.execute(
       'UPDATE subjects SET name=?,code=?,semester=?,credits=?,faculty_id=? WHERE institute_id=? AND id=?',
-      [b.name, b.code, b.semester, b.credits, primaryFacultyId, req.user.institute_id, req.params.id],
+      [
+        b.name,
+        b.code,
+        b.semester,
+        b.credits,
+        primaryFacultyId,
+        req.user.institute_id,
+        req.params.id,
+      ],
     );
     await c.execute('DELETE FROM subject_faculties WHERE institute_id=? AND subject_id=?', [
       req.user.institute_id,
@@ -335,7 +355,9 @@ app.get('/api/students/:id', async (req, res) => {
   for (const r of records) {
     let faculties = map.get(r.subject_id) || [];
     if (!faculties.length && r.legacy_faculty_name) {
-      faculties = [{ id: r.faculty_id, name: r.legacy_faculty_name, email: r.legacy_faculty_email }];
+      faculties = [
+        { id: r.faculty_id, name: r.legacy_faculty_name, email: r.legacy_faculty_email },
+      ];
     }
     r.faculties = faculties;
     r.faculty_ids = faculties.map((f) => f.id);
